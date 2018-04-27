@@ -27,7 +27,10 @@ IOperand const	*OpFactory::createInt8(std::string const &value) const {
 		val = std::stoi(value);
 	}
 	catch (std::exception & e) {
-		throw Exception("The value is not Int8");
+		if (value[0] == '-')
+			throw Exception("Underflow on value");
+		else
+			throw Exception("Overflow on value");
 	}
 	if (val < -128 || val > 127)
 		throw Exception("Overflow on value");
@@ -41,7 +44,10 @@ IOperand const	*OpFactory::createInt16(std::string const &value) const {
 		val = std::stoi(value);
 	}
 	catch (std::exception & e) {
-		throw Exception("The value is not Int16");
+		if (value[0] == '-')
+			throw Exception("Underflow on value");
+		else
+			throw Exception("Overflow on value");
 	}
 	if (val < -32768 || val > 32767)
 		throw Exception("Overflow on value");
@@ -55,7 +61,10 @@ IOperand const	*OpFactory::createInt32(std::string const &value) const {
 		val = std::stoi(value);
 	}
 	catch (std::exception & e) {
-		throw Exception("The value is not Int32");
+		if (value[0] == '-')
+			throw Exception("Underflow on value");
+		else
+			throw Exception("Overflow on value");
 	}
 	return (new Operand<int32_t>(val, Int32, 3));
 }
@@ -64,10 +73,13 @@ IOperand const	*OpFactory::createFloat(std::string const &value) const {
 	float val;
 
 	try {
-		val = std::stoi(value);
+		val = std::stof(value);
 	}
 	catch (std::exception & e) {
-		throw Exception("The value is not Float");
+		if (value[0] == '-')
+			throw Exception("Underflow on value");
+		else
+			throw Exception("Overflow on value");
 	}
 	return (new Operand<float>(val, Float, 4));
 }
@@ -76,10 +88,13 @@ IOperand const	*OpFactory::createDouble(std::string const &value) const {
 	double val;
 
 	try {
-		val = std::stoi(value);
+		val = std::stod(value);
 	}
 	catch (std::exception & e) {
-		throw Exception("The value is not Double");
+		if (value[0] == '-')
+			throw Exception("Underflow on value");
+		else
+			throw Exception("Overflow on value");
 	}
 	return (new Operand<double>(val, Double, 5));
 }

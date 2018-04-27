@@ -28,12 +28,15 @@ public:
 	IOperand const	*operator*(IOperand const & rhs) const;
 	IOperand const	*operator/(IOperand const & rhs) const;
 	IOperand const	*operator%(IOperand const & rhs) const;
+	IOperand const	*operator&(IOperand const & rhs) const;
+	IOperand const	*operator|(IOperand const & rhs) const;
+	IOperand const	*operator^(IOperand const & rhs) const;
 	bool            operator==(IOperand const & rhs) const;
 
 	std::string const	&toString(void) const;
 
 private:
-	Operand(void);
+	Operand();
 	T				_val;
 	eOperandType	_type;
 	int 			_prec;
@@ -42,11 +45,17 @@ private:
 };
 
 template <typename T>
-Operand<T>::Operand(void) {}
+Operand<T>::Operand() : _type(Int32), _prec(2), _val(0), _str("0") {}
 
 template <typename T>
 Operand<T>::Operand(T value, eOperandType type, int prec) : _val(value), _type(type), _prec(prec) {
-	_str = std::to_string(value);
+	std::ostringstream	ss;
+
+	if (type == Int8)
+		ss << static_cast<int>(value);
+	else
+		ss << value;
+	_str = ss.str();
 }
 
 template <typename T>
@@ -55,7 +64,7 @@ Operand<T>::Operand(Operand<T> const & rhs) {
 }
 
 template <typename T>
-Operand<T>::~Operand(void) {}
+Operand<T>::~Operand() {}
 
 template <typename T>
 int 	Operand<T>::getPrecision() const {
@@ -141,7 +150,43 @@ IOperand const	*Operand<T>::operator%(IOperand const & rhs) const {
 }
 
 template <typename T>
-bool		Operand<T>::operator==(Operand<T> const &rhs) {
+IOperand const	*Operand<T>::operator&(IOperand const &rhs) const {
+	eOperandType	newType;
+	double			rval = std::stod(rhs.toString());
+
+	if (this->getPrecision() > rhs.getPrecision())
+		newType = this->getType();
+	else
+		newType = rhs.getType();
+	return (_factory.createOperand(newType, std::to_string(_val & rval)));
+}
+
+template <typename T>
+IOperand const	*Operand<T>::operator|(IOperand const &rhs) const {
+	eOperandType	newType;
+	double			rval = std::stod(rhs.toString());
+
+	if (this->getPrecision() > rhs.getPrecision())
+		newType = this->getType();
+	else
+		newType = rhs.getType();
+	return (_factory.createOperand(newType, std::to_string(_val | rval)));
+}
+
+template <typename T>
+IOperand const	*Operand<T>::operator^(IOperand const &rhs) const {
+	eOperandType	newType;
+	double			rval = std::stod(rhs.toString());
+
+	if (this->getPrecision() > rhs.getPrecision())
+		newType = this->getType();
+	else
+		newType = rhs.getType();
+	return (_factory.createOperand(newType, std::to_string(_val ^ rval)));
+}
+
+template <typename T>
+bool		Operand<T>::operator==(IOperand const &rhs) const {
 	if (_type == rhs.getType() && toString() == rhs.toString())
 		return (true);
 	return (false);

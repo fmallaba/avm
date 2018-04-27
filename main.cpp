@@ -1,20 +1,47 @@
 #include <iostream>
-#include "Operand.h"
+#include <fstream>
+#include <regex>
+#include "AVM.h"
 
-int main() {
-    std::cout << "Hello, World!" << std::endl;
-	OpFactory factory;
-	IOperand const *int8 = factory.createOperand(Int8, "97");
+void	get_file_content(char *file, std::string & input)
+{
+	std::ifstream	ifs(file);
 
-	std::cout << int8->toString() << std::endl;
-
-	try {
-		factory.createOperand(Int16, "349850374503");
-	}
-	catch (std::exception & e)
+	if (ifs.fail())
 	{
+		std::cout << "File open error" << std::endl;
+		exit(-1);
+	}
+	std::getline(ifs, input, static_cast<char>(ifs.eof()));
+}
+
+void	get_input(std::string & input)
+{
+	std::string	line;
+	while (std::getline(std::cin, line))
+	{
+		if (std::regex_match(line, std::regex("^;;$")))
+			return;
+		input += line + "\n";
+	}
+	std::cout << "Unexpected terminating" << std::endl;
+	exit(-1);
+}
+
+int main(int ac, char **av) {
+	AVM avm;
+	std::string	input;
+
+	if (ac > 1)
+		get_file_content(av[1], input);
+	else
+		get_input(input);
+//	std::cout << input << std::endl;
+	try {
+		avm.start_execute(input);
+	}
+	catch (std::exception & e) {
 		std::cout << e.what() << std::endl;
 	}
-
 	return 0;
 }

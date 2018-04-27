@@ -9,16 +9,19 @@
 #include "IOperand.h"
 
 typedef enum {
-	Push,
-	Pop,
+	Push = 10,
+	Pop = 0,
 	Dump,
-	Assert,
-	Add,
+	Assert = 11,
+	Add = 2,
 	Sub,
 	Mul,
 	Div,
 	Mod,
 	Print,
+	And,
+	Or,
+	Xor,
 	Exit
 }		eInstructions;
 

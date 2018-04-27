@@ -11,6 +11,8 @@
 
 class AVM {
 public:
+	typedef void(AVM::*func)();
+	typedef void(AVM::*func2)(eOperandType, std::string const &);
 	AVM(void);
 	AVM(AVM const & rhs);
 	~AVM(void);
@@ -23,6 +25,8 @@ private:
 	OpFactory				_factory;
 	size_t					_count;
 	std::list<IOperand const*>	_containter;
+	func					_funcs[12];
+	func2					_funcs2[2];
 
 	void	push(eOperandType type, std::string const & val);
 	void	pop(void);
@@ -34,6 +38,9 @@ private:
 	void	div(void);
 	void	mod(void);
 	void	print(void);
+	void	bit_and(void);
+	void	bit_or(void);
+	void	bit_xor(void);
 	void	exit_m(void);
 };
 
