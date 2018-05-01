@@ -9,9 +9,12 @@
 
 class Exception : public std::exception {
 public:
-	Exception(char const * msg);
-	Exception(void);
-	virtual ~Exception() throw(){}
+	explicit Exception(char const * msg);
+	Exception();
+	Exception(Exception const & rhs);
+	virtual ~Exception() throw();
+
+	Exception	&operator=(Exception const & rhs);
 	char const *what() const throw();
 
 private:

@@ -51,11 +51,19 @@ template <typename T>
 Operand<T>::Operand(T value, eOperandType type, int prec) : _val(value), _type(type), _prec(prec) {
 	std::ostringstream	ss;
 
-	if (type == Int8)
+	if (type == Float || type == Double)
+		ss << std::fixed << value;
+	else if (type == Int8)
 		ss << static_cast<int>(value);
 	else
 		ss << value;
 	_str = ss.str();
+	if (type == Float || type == Double)
+	{
+		std::string::size_type pos = _str.find_last_not_of("0");
+		if (pos != std::string::npos)
+			_str.erase(pos + 1);
+	}
 }
 
 template <typename T>
@@ -152,37 +160,37 @@ IOperand const	*Operand<T>::operator%(IOperand const & rhs) const {
 template <typename T>
 IOperand const	*Operand<T>::operator&(IOperand const &rhs) const {
 	eOperandType	newType;
-	double			rval = std::stod(rhs.toString());
+	int32_t			rval = static_cast<int32_t>(std::stod(rhs.toString()));
 
 	if (this->getPrecision() > rhs.getPrecision())
 		newType = this->getType();
 	else
 		newType = rhs.getType();
-	return (_factory.createOperand(newType, std::to_string(_val & rval)));
+	return (_factory.createOperand(newType, std::to_string(static_cast<int32_t >(_val) & rval)));
 }
 
 template <typename T>
 IOperand const	*Operand<T>::operator|(IOperand const &rhs) const {
 	eOperandType	newType;
-	double			rval = std::stod(rhs.toString());
+	int32_t			rval = static_cast<int32_t>(std::stod(rhs.toString()));
 
 	if (this->getPrecision() > rhs.getPrecision())
 		newType = this->getType();
 	else
 		newType = rhs.getType();
-	return (_factory.createOperand(newType, std::to_string(_val | rval)));
+	return (_factory.createOperand(newType, std::to_string(static_cast<int32_t >(_val) | rval)));
 }
 
 template <typename T>
 IOperand const	*Operand<T>::operator^(IOperand const &rhs) const {
 	eOperandType	newType;
-	double			rval = std::stod(rhs.toString());
+	int32_t			rval = static_cast<int32_t>(std::stod(rhs.toString()));
 
 	if (this->getPrecision() > rhs.getPrecision())
 		newType = this->getType();
 	else
 		newType = rhs.getType();
-	return (_factory.createOperand(newType, std::to_string(_val ^ rval)));
+	return (_factory.createOperand(newType, std::to_string(static_cast<int32_t >(_val) ^ rval)));
 }
 
 template <typename T>

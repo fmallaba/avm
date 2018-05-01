@@ -4,8 +4,8 @@
 
 #include <iostream>
 #include <sstream>
-#include "AVM.h"
-#include "Exception.h"
+#include "../includes/AVM.h"
+#include "../includes/Exception.h"
 
 AVM::AVM(void) : _count(0) {
 	_funcs2[0] = &AVM::push;
@@ -22,6 +22,7 @@ AVM::AVM(void) : _count(0) {
 	_funcs[9] = &AVM::bit_or;
 	_funcs[10] = &AVM::bit_xor;
 	_funcs[11] = &AVM::exit_m;
+	_verbose = false;
 }
 
 AVM::AVM(AVM const &rhs) : _count(0) {
@@ -40,11 +41,13 @@ AVM::AVM(AVM const &rhs) : _count(0) {
 	_funcs[9] = &AVM::bit_or;
 	_funcs[10] = &AVM::bit_xor;
 	_funcs[11] = &AVM::exit_m;
+	_verbose = false;
 }
 
 AVM::~AVM() {
 	std::list<IOperand const *>::iterator	it = _containter.begin();
-	for (int i = 0; i < _count; ++i) {
+
+	for (size_t i = 0; i < _count; ++i) {
 		delete *it++;
 	}
 }
@@ -52,25 +55,36 @@ AVM::~AVM() {
 AVM	&AVM::operator=(AVM const &rhs) {
 	_count = rhs._count;
 	_containter = rhs._containter;
+	_verbose = rhs._verbose;
 	return (*this);
 }
 
 void	AVM::push(eOperandType type, std::string const &val) {
 	_containter.push_front(_factory.createOperand(type, val));
 	_count++;
+	if (_verbose == true)
+		std::cout << "\033[0;33mPush value \033[0;36m" << val << "\033[0m" << std::endl;
 }
 
 void	AVM::pop() {
 	if (!_count)
 		throw Exception("Pop on empty stack");
+	if (_verbose == true)
+		std::cout << "\033[0;33mPop value \033[0;36m" << (*_containter.begin())->toString() << "\033[0m" << std::endl;
 	_containter.pop_front();
 	_count--;
 }
 
 void	AVM::dump() {
+	if (_verbose == true)
+		std::cout << "\033[0;33mDump start :\033[0m" << std::endl;
 	for (std::list<IOperand const *>::iterator i = _containter.begin(); i != _containter.end(); ++i) {
-		std::cout << (*i)->toString() << std::endl;
+		if (_verbose == true)
+			std::cout << "	";
+		std::cout << "\033[0;36m" << (*i)->toString() << "\033[0m" << std::endl;
 	}
+	if (_verbose == true)
+		std::cout << "\033[0;33mDump end.\033[0m" << std::endl;
 }
 
 void	AVM::assert(eOperandType type, std::string const &val) {
@@ -79,17 +93,23 @@ void	AVM::assert(eOperandType type, std::string const &val) {
 	IOperand const *top = *(_containter.begin());
 	IOperand const *assert = _factory.createOperand(type, val);
 	if (!(*top == *assert))
-		throw Exception("Values are not equal");
+		throw Exception("Assert is not true");
+	if (_verbose == true)
+		std::cout << "\033[0;33mAssert value \033[0;36m" << val << " success\033[0m" << std::endl;
 }
 
 void	AVM::add() {
 	IOperand const	*newOp;
 
 	if (_count < 2)
-		throw Exception("Too few elements");
+		throw Exception("Too few elements on the stack");
 	IOperand const	*tmp = *(_containter.begin());
 	_containter.pop_front();
 	newOp = *tmp + *(*(_containter.begin()));
+	if (_verbose == true)
+		std::cout << "\033[0;33mAddition : \033[0;36m"
+				  << (*_containter.begin())->toString() << " + " << tmp->toString()
+				  << " = " << newOp->toString() << "\033[0m" << std::endl;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -99,10 +119,14 @@ void	AVM::sub() {
 	IOperand const	*newOp;
 
 	if (_count < 2)
-		throw Exception("Too few elements");
+		throw Exception("Too few elements on the stack");
 	IOperand const	*tmp = *(_containter.begin());
 	_containter.pop_front();
 	newOp = *tmp - *(*(_containter.begin()));
+	if (_verbose == true)
+		std::cout << "\033[0;33mSubtraction : \033[0;36m"
+				  << (*_containter.begin())->toString() << " - " << tmp->toString()
+				  << " = " << newOp->toString() << "\033[0m" << std::endl;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -112,10 +136,14 @@ void	AVM::mul() {
 	IOperand const	*newOp;
 
 	if (_count < 2)
-		throw Exception("Too few elements");
+		throw Exception("Too few elements on the stack");
 	IOperand const	*tmp = *(_containter.begin());
 	_containter.pop_front();
 	newOp = *tmp * *(*(_containter.begin()));
+	if (_verbose == true)
+		std::cout << "\033[0;33mMultiplication : \033[0;36m"
+				  << (*_containter.begin())->toString() << " * " << tmp->toString()
+				  << " = " << newOp->toString() << "\033[0m" << std::endl;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -125,10 +153,14 @@ void	AVM::div() {
 	IOperand const	*newOp;
 
 	if (_count < 2)
-		throw Exception("Too few elements");
+		throw Exception("Too few elements on the stack");
 	IOperand const	*tmp = *(_containter.begin());
 	_containter.pop_front();
 	newOp = *(*(_containter.begin())) / *tmp;
+	if (_verbose == true)
+		std::cout << "\033[0;33mDivision : \033[0;36m"
+				  << (*_containter.begin())->toString() << " / " << tmp->toString()
+				  << " = " << newOp->toString() << "\033[0m" << std::endl;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -138,10 +170,14 @@ void	AVM::mod() {
 	IOperand const	*newOp;
 
 	if (_count < 2)
-		throw Exception("Too few elements");
+		throw Exception("Too few elements on the stack");
 	IOperand const	*tmp = *(_containter.begin());
 	_containter.pop_front();
 	newOp = *(*(_containter.begin())) % *tmp;
+	if (_verbose == true)
+		std::cout << "\033[0;33mModulation : \033[0;36m"
+				  << (*_containter.begin())->toString() << " % " << tmp->toString()
+				  << " = " << newOp->toString() << "\033[0m" << std::endl;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -155,17 +191,26 @@ void	AVM::print() {
 	if ((*(_containter.begin()))->getType() != Int8)
 		throw Exception("The top value type is not int8");
 	c = static_cast<char>(std::stoi((*(_containter.begin()))->toString()));
-	std::cout << c << std::endl;
+	if (_verbose == true)
+		std::cout << "\033[0;33mPrint : " << std::endl;
+	std::cout << "\033[0;32m" << c << "\033[0m" << std::endl;
 }
 
 void	AVM::bit_and() {
 	IOperand const	*newOp;
 
 	if (_count < 2)
-		throw Exception("Too few elements");
+		throw Exception("Too few elements on the stack");
+	if ((*_containter.begin())->getPrecision() > 3
+		|| (*(_containter.begin()++))->getPrecision() > 3)
+		throw Exception("Bitwise operation for float or double make no sense");
 	IOperand const	*tmp = *(_containter.begin());
 	_containter.pop_front();
 	newOp = *(*(_containter.begin())) & *tmp;
+	if (_verbose == true)
+		std::cout << "\033[0;33mBitwise and : \033[0;36m"
+				  << (*_containter.begin())->toString() << " & " << tmp->toString()
+				  << " = " << newOp->toString() << "\033[0m" << std::endl;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -175,10 +220,17 @@ void	AVM::bit_or() {
 	IOperand const	*newOp;
 
 	if (_count < 2)
-		throw Exception("Too few elements");
+		throw Exception("Too few elements on the stack");
+	if ((*_containter.begin())->getPrecision() > 3
+		|| (*(_containter.begin()++))->getPrecision() > 3)
+		throw Exception("Bitwise operation for float or double make no sense");
 	IOperand const	*tmp = *(_containter.begin());
 	_containter.pop_front();
 	newOp = *(*(_containter.begin())) | *tmp;
+	if (_verbose == true)
+		std::cout << "\033[0;33mBitwise or : \033[0;36m"
+				  << (*_containter.begin())->toString() << " | " << tmp->toString()
+				  << " = " << newOp->toString() << "\033[0m" << std::endl;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -188,16 +240,30 @@ void	AVM::bit_xor() {
 	IOperand const	*newOp;
 
 	if (_count < 2)
-		throw Exception("Too few elements");
+		throw Exception("Too few elements on the stack");
+	if ((*_containter.begin())->getPrecision() > 3
+		|| (*(_containter.begin()++))->getPrecision() > 3)
+		throw Exception("Bitwise operation for float or double make no sense");
 	IOperand const	*tmp = *(_containter.begin());
 	_containter.pop_front();
 	newOp = *(*(_containter.begin())) ^ *tmp;
+	if (_verbose == true)
+		std::cout << "\033[0;33mBitwise xor : \033[0;36m"
+				  << (*_containter.begin())->toString() << " ^ " << tmp->toString()
+				  << " = " << newOp->toString() << "\033[0m" << std::endl;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
 }
 
 void	AVM::exit_m() {
+	std::list<IOperand const *>::iterator	it = _containter.begin();
+
+	for (size_t i = 0; i < _count; ++i) {
+		delete *it++;
+	}
+	if (_verbose == true)
+		std::cout << "\033[0;33mExit" << std::endl;
 	exit(0);
 }
 
@@ -218,15 +284,21 @@ void	AVM::start_execute(std::string const &instructions) {
 			try {
 				instruction = _parser.parse_line(line, type, val);
 				if (instruction == Push || instruction == Assert)
-					((this->*_funcs2[instruction % 10]))(type, val);
+					((this->*_funcs2[instruction - 12]))(type, val);
 				else
 					((this->*_funcs[instruction]))();
 			}
 			catch (std::exception & e)
 			{
-				std::cout << "line " << count_line << " : Error : " << e.what() << std::endl;
+				std::cout << "\033[0;31mline " << count_line << " : Error : " << e.what() << "\033[0m" << std::endl;
+				if (_verbose == false)
+					this->exit_m();
 			}
 		}
 	}
 	throw Exception("Exit command missing");
+}
+
+void	AVM::verbose(bool val) {
+	_verbose = val;
 }

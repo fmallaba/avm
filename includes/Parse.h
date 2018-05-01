@@ -5,14 +5,13 @@
 #ifndef AVM_PARSE_H
 # define AVM_PARSE_H
 
-#include <string>
-#include "IOperand.h"
+# include "IOperand.h"
 
 typedef enum {
-	Push = 10,
+	Push = 12,
 	Pop = 0,
 	Dump,
-	Assert = 11,
+	Assert = 13,
 	Add = 2,
 	Sub,
 	Mul,

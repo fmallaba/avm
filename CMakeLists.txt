@@ -3,4 +3,4 @@ project(avm)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(avm main.cpp IOperand.h Operand.cpp Operand.h OpFactory.cpp OpFactory.h Exception.cpp Exception.h Parse.cpp Parse.h AVM.cpp AVM.h)
+add_executable(avm src/main.cpp includes/IOperand.h includes/Operand.h src/OpFactory.cpp includes/OpFactory.h src/Exception.cpp includes/Exception.h src/Parse.cpp includes/Parse.h src/AVM.cpp includes/AVM.h)

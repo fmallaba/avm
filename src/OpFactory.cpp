@@ -3,8 +3,8 @@
 //
 
 #include <iostream>
-#include "OpFactory.h"
-#include "Operand.h"
+#include "../includes/OpFactory.h"
+#include "../includes/Operand.h"
 
 OpFactory::OpFactory(void) {
 	_funcs[0] = &OpFactory::createInt8;

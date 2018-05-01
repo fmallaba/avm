@@ -5,9 +5,9 @@
 #ifndef AVM_AVM_H
 #define AVM_AVM_H
 
-#include <list>
-#include "Parse.h"
-#include "OpFactory.h"
+# include <list>
+# include "Parse.h"
+# include "OpFactory.h"
 
 class AVM {
 public:
@@ -20,6 +20,7 @@ public:
 	AVM	&operator=(AVM const & rhs);
 
 	void	start_execute(std::string const & instructions);
+	void	verbose(bool val);
 private:
 	Parse					_parser;
 	OpFactory				_factory;
@@ -27,6 +28,7 @@ private:
 	std::list<IOperand const*>	_containter;
 	func					_funcs[12];
 	func2					_funcs2[2];
+	bool 					_verbose;
 
 	void	push(eOperandType type, std::string const & val);
 	void	pop(void);
