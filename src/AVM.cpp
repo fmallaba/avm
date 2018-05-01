@@ -71,6 +71,7 @@ void	AVM::pop() {
 		throw Exception("Pop on empty stack");
 	if (_verbose == true)
 		std::cout << "\033[0;33mPop value \033[0;36m" << (*_containter.begin())->toString() << "\033[0m" << std::endl;
+	delete *_containter.begin();
 	_containter.pop_front();
 	_count--;
 }
@@ -110,6 +111,8 @@ void	AVM::add() {
 		std::cout << "\033[0;33mAddition : \033[0;36m"
 				  << (*_containter.begin())->toString() << " + " << tmp->toString()
 				  << " = " << newOp->toString() << "\033[0m" << std::endl;
+	delete *_containter.begin();
+	delete tmp;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -127,6 +130,8 @@ void	AVM::sub() {
 		std::cout << "\033[0;33mSubtraction : \033[0;36m"
 				  << (*_containter.begin())->toString() << " - " << tmp->toString()
 				  << " = " << newOp->toString() << "\033[0m" << std::endl;
+	delete *_containter.begin();
+	delete tmp;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -144,6 +149,8 @@ void	AVM::mul() {
 		std::cout << "\033[0;33mMultiplication : \033[0;36m"
 				  << (*_containter.begin())->toString() << " * " << tmp->toString()
 				  << " = " << newOp->toString() << "\033[0m" << std::endl;
+	delete *_containter.begin();
+	delete tmp;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -161,6 +168,8 @@ void	AVM::div() {
 		std::cout << "\033[0;33mDivision : \033[0;36m"
 				  << (*_containter.begin())->toString() << " / " << tmp->toString()
 				  << " = " << newOp->toString() << "\033[0m" << std::endl;
+	delete *_containter.begin();
+	delete tmp;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -178,6 +187,8 @@ void	AVM::mod() {
 		std::cout << "\033[0;33mModulation : \033[0;36m"
 				  << (*_containter.begin())->toString() << " % " << tmp->toString()
 				  << " = " << newOp->toString() << "\033[0m" << std::endl;
+	delete *_containter.begin();
+	delete tmp;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -211,6 +222,8 @@ void	AVM::bit_and() {
 		std::cout << "\033[0;33mBitwise and : \033[0;36m"
 				  << (*_containter.begin())->toString() << " & " << tmp->toString()
 				  << " = " << newOp->toString() << "\033[0m" << std::endl;
+	delete *_containter.begin();
+	delete tmp;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -231,6 +244,8 @@ void	AVM::bit_or() {
 		std::cout << "\033[0;33mBitwise or : \033[0;36m"
 				  << (*_containter.begin())->toString() << " | " << tmp->toString()
 				  << " = " << newOp->toString() << "\033[0m" << std::endl;
+	delete *_containter.begin();
+	delete tmp;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -251,6 +266,8 @@ void	AVM::bit_xor() {
 		std::cout << "\033[0;33mBitwise xor : \033[0;36m"
 				  << (*_containter.begin())->toString() << " ^ " << tmp->toString()
 				  << " = " << newOp->toString() << "\033[0m" << std::endl;
+	delete *_containter.begin();
+	delete tmp;
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
