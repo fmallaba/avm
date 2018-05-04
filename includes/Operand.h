@@ -149,7 +149,7 @@ IOperand const	*Operand<T>::operator%(IOperand const & rhs) const {
 	int32_t			rval = std::stoi(rhs.toString());
 
 	if (rval == 0)
-		throw Exception("Modulo by zero");
+		throw Exception("Modulation by zero");
 	if (this->getPrecision() > rhs.getPrecision())
 		newType = this->getType();
 	else

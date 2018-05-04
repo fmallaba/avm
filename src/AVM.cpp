@@ -161,15 +161,16 @@ void	AVM::div() {
 
 	if (_count < 2)
 		throw Exception("Too few elements on the stack");
-	IOperand const	*tmp = *(_containter.begin());
-	_containter.pop_front();
-	newOp = *(*(_containter.begin())) / *tmp;
+	IOperand const	*left = *(_containter.begin());
+	IOperand const	*right = *++_containter.begin();
+	newOp = *right / *left;
 	if (_verbose == true)
 		std::cout << "\033[0;33mDivision : \033[0;36m"
-				  << (*_containter.begin())->toString() << " / " << tmp->toString()
+				  << (*_containter.begin())->toString() << " / " << left->toString()
 				  << " = " << newOp->toString() << "\033[0m" << std::endl;
-	delete *_containter.begin();
-	delete tmp;
+	delete right;
+	delete left;
+	_containter.pop_front();
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -180,15 +181,16 @@ void	AVM::mod() {
 
 	if (_count < 2)
 		throw Exception("Too few elements on the stack");
-	IOperand const	*tmp = *(_containter.begin());
-	_containter.pop_front();
-	newOp = *(*(_containter.begin())) % *tmp;
+	IOperand const	*left = *(_containter.begin());
+	IOperand const	*right = *++_containter.begin();
+	newOp = *right % *left;
 	if (_verbose == true)
 		std::cout << "\033[0;33mModulation : \033[0;36m"
-				  << (*_containter.begin())->toString() << " % " << tmp->toString()
+				  << (*_containter.begin())->toString() << " % " << left->toString()
 				  << " = " << newOp->toString() << "\033[0m" << std::endl;
-	delete *_containter.begin();
-	delete tmp;
+	delete right;
+	delete left;
+	_containter.pop_front();
 	_containter.pop_front();
 	_containter.push_front(newOp);
 	_count--;
@@ -213,7 +215,7 @@ void	AVM::bit_and() {
 	if (_count < 2)
 		throw Exception("Too few elements on the stack");
 	if ((*_containter.begin())->getPrecision() > 3
-		|| (*(_containter.begin()++))->getPrecision() > 3)
+		|| (*++_containter.begin())->getPrecision() > 3)
 		throw Exception("Bitwise operation for float or double make no sense");
 	IOperand const	*tmp = *(_containter.begin());
 	_containter.pop_front();
@@ -235,7 +237,7 @@ void	AVM::bit_or() {
 	if (_count < 2)
 		throw Exception("Too few elements on the stack");
 	if ((*_containter.begin())->getPrecision() > 3
-		|| (*(_containter.begin()++))->getPrecision() > 3)
+		|| (*++_containter.begin())->getPrecision() > 3)
 		throw Exception("Bitwise operation for float or double make no sense");
 	IOperand const	*tmp = *(_containter.begin());
 	_containter.pop_front();
@@ -257,7 +259,7 @@ void	AVM::bit_xor() {
 	if (_count < 2)
 		throw Exception("Too few elements on the stack");
 	if ((*_containter.begin())->getPrecision() > 3
-		|| (*(_containter.begin()++))->getPrecision() > 3)
+		|| (*++_containter.begin())->getPrecision() > 3)
 		throw Exception("Bitwise operation for float or double make no sense");
 	IOperand const	*tmp = *(_containter.begin());
 	_containter.pop_front();
@@ -274,10 +276,8 @@ void	AVM::bit_xor() {
 }
 
 void	AVM::exit_m() {
-	std::list<IOperand const *>::iterator	it = _containter.begin();
-
-	for (size_t i = 0; i < _count; ++i) {
-		delete *it++;
+	for (auto i = _containter.begin(); i != _containter.end(); ++i) {
+		delete *i;
 	}
 	if (_verbose == true)
 		std::cout << "\033[0;33mExit" << std::endl;
