@@ -45,10 +45,8 @@ AVM::AVM(AVM const &rhs) : _count(0) {
 }
 
 AVM::~AVM() {
-	std::list<IOperand const *>::iterator	it = _containter.begin();
-
-	for (size_t i = 0; i < _count; ++i) {
-		delete *it++;
+	for (auto i = _containter.begin(); i != _containter.end(); ++i) {
+		delete *i;
 	}
 }
 
